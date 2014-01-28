@@ -39,7 +39,7 @@ JNIEXPORT jint Java_com_android_systemui_DCloudNative_mountDarkCloud(JNIEnv* env
 	if(ret != 0 && ret != errno) {
 		LOGE("rm Error [%s]", strerror(errno));
 	}
-	ret = system("su -c ./data/local/tmp/darkcloud /sdcard/darkcloud -oallow_other");
+	ret = system("su -c ./data/local/tmp/darkcloud /sdcard/darkcloud -oallow_other -obig_writes");
 	if(ret != 0) {
 		LOGE("mount Error [%s]", strerror(errno));
 	}
