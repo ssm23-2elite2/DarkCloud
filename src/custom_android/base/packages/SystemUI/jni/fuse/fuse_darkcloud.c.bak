@@ -1,0 +1,402 @@
+/*
+
+*/
+
+#define FUSE_USE_VERSION 26
+
+#include <dirent.h>
+#include <errno.h>
+#include <fuse.h>
+#include <string.h>
+#include <sys/stat.h>
+
+#include "dc_cache.h"
+#include "dc_interface.h"
+#include "str.h"
+
+struct dc_state {
+	char* root;
+	struct dci_state dci_data;
+};
+
+// get File attributes
+static int dc_getattr(const char *path, struct stat *stbuf)
+{
+        struct fuse_context *fc = fuse_get_context();
+
+	if (strcmp("/", path) == 0) {
+		stbuf->st_mode = S_IFDIR | 0700;
+		stbuf->st_nlink=2;
+	} else {
+		memstr(stbuf, 0, sizeof(struct stat));
+		const char *filename = strip_path(path);
+		struct fs_entry_t *entry = fs_entry_find(filename);
+		if(!entry)
+			return -ENOENT;
+		else
+			stbuf->st_size = entry->size;
+		
+		stbuf->st_mode = S_IFREG | 0600;
+		stbuf->st_nlink=1;
+	}
+	stbuf->st_uid = fc->uid;
+	stbuf->st_gid = fc->gid;
+	
+	return 0;
+}
+
+// Read the target of a symbolic link.
+static int dc_readlink(const char *path, char *link, size_t size)
+{
+/*	int res;
+
+	res = readlink(path, buf, size - 1);
+	if (res == -1)
+		return -errno;
+	
+	buf[res] = '\0';
+
+*/	return 0;
+}
+
+// Create a regular file.
+static int dc_mknod(const char *path, mode_t mode, dev_t dev)
+{
+/*	int res;
+
+	if (S_ISREG(mode)) {
+		res = open(path, O_CREAT | O_EXCL | O_WRONLY, mode );
+		if (res >= 0)
+			res = close(res);
+	} else if (S_ISFIFO(mode)) {
+		res = mkfifo(path, mode);
+	} else {
+		res = mknod(path, mode, dev);
+	}
+
+	if (res == -1)
+		return -errno;
+*/
+	return 0;
+}
+
+// Remove a file.
+static int dc_unlink(const char *path) 
+{
+/*	int res;
+		
+	res = rmdir(path);
+	if (res == -1)
+		return -errno;
+*/
+	return 0;
+}
+
+// Remove a directory.
+static int dc_rmdir(const char *path)
+{
+/*	int res;
+		
+	res = rmdir(path);
+	if (res == -1)
+		return -errno;
+*/
+	return 0;
+}
+	
+
+// Create a Symbolic Link
+static int dc_symlink(const char *path, const char *link)
+{
+	return 0;
+} 
+
+// Rename a file.
+static int dc_rename(const char *path, const char *newpath)
+{
+/*	int res;
+
+	res = rename(path, newpath);
+	if (res == -1)
+		return -errno;
+*/
+	return 0;
+}
+
+// Create a Hard Link	
+static int dc_link(const char *path, const char *newpath)
+{
+	return 0;
+}
+
+// Change the permission bits of a file.
+static int dc_chmod(const char *path, mode_t mode)
+{
+	return 0;
+}
+
+// Change the owner and group of a file.
+static int dc_chown(const char *path, uid_t uid, gid_t gid)
+{
+	return 0;
+}
+
+// Change the size of a file
+static int dc_truncate(const char *path, off_t newsize)
+{
+	return 0;
+}
+
+// File open 
+static int dc_open(const char *path, struct fuse_file_info *info)
+{
+	struct dci_state *state = &((struct dc_state*)fuse_get_context()->private_data)->dci_data;
+
+	int flags = info->flags;
+
+	if(flags & O_RDONLY) {
+	}
+
+	if(flags & O_WRONLY) {
+	}
+
+	if(flags & O_RDWR) {
+	}
+
+	const char *filename = strip_path(path);
+	struct fs_entry_t *entry = fs_entry_find(filename);
+	int load = dci_load(state, entry);
+
+	if(load)
+		return -1;
+	
+	return 0;
+}
+
+// Read data from an open file.
+static int dc_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *info)
+{
+	struct dci_state *state = &((struct dc_state*)fuse_get_context()->private_data)->dci_data;
+	const char *filename = strip_path(path);
+	struct fs_entry_t *entry = fs_entry_find(filename);
+	if(!entry)
+		return 0;
+	size_t length = size;
+	const char const* chunk = dci_read(&length, entry, offset);
+	memcpy(buf, chunk, length);
+	
+	return length;
+}
+
+// Write data to an open file.
+static int dc_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Get file system statistics.
+static int dc_statfs(const char *path, struct statvfs *statv)
+{
+	return 0;
+}
+
+// Flush cached data.
+static int dc_flush(const char *path, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Release an open file.
+static int dc_release(const char *path, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Synchronize file contents.
+static int dc_fsync(const char *path, int datasync, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Set extended attributes
+static int dc_setxattr(const char *path, const char *name, const char *value, size_t size, int flags)
+{
+	return 0;
+}
+
+// Get extended attributes
+static int dc_getxattr(const char *path, const char *name, char *value, size_t size)
+{
+	return 0;
+}
+
+// List extended attributes
+static int dc_listxattr(const char *path, char *list, size_t size)
+{
+	return 0;
+}
+
+// Remove extended attributes
+static int dc_removexattr(const char *path, const char *name)
+{
+	return 0;
+}
+
+// Open a directory
+static int dc_opendir(const char *path, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Read Directory
+static int dc_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *info)
+{
+	filler(buf, ".", NULL, 0);
+	filler(buf, "..", NULL, 0);
+	struct dci_state *state = &((struct dc_state*)fuse_get_context()->private_data)->dci_data;
+
+	struct fs_entry_t *entry = state->head;
+	while(entry != NULL)
+	{
+		if(filler(buf, entry->filename.str, NULL, 0))
+		{	
+			fprintf(stderr, "readdir() filler()\n");
+			return -ENOMEM;
+		}
+		entry = entry->next;
+	}
+
+	return 0;
+}
+
+// Release a directory.
+static int dc_releasedir(const char *path, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Synchronize directory contents.
+static int dc_fsyncdir(const char *path, int datasync, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Initialize filesystem.
+static void *dc_init(struct fuse_conn_info *conn)
+{
+	return ((struct dc_state *)fuse_get_context()->private_data);
+}
+
+// Clean up filesystem.
+static void dc_destroy(void *userdata)
+{
+}
+
+// Check file access permission.
+static int dc_access(const char *path, int mask)
+{
+	return 0;
+}
+
+// Create and open a file.
+static int dc_create(const char *path, mode_t mode, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Change the size of an open file.
+static int dc_ftruncate(const char *path, off_t offset, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+// Get attributes from an open file.
+static int dc_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *info)
+{
+	return 0;
+}
+
+static int dc_lock(cosnt char *path, struct fuse_file_info *info, int cmd, struct flock *lock)
+{
+	return 0;
+}
+
+// Change the access and modification times of a file with nanosecond resolution.
+static int dc_utimens(const char *path, const struct timespec tv[2])
+{
+	return 0;
+}
+
+// Ioctl
+static dc_ioctl(const char *path, int cmd, void *arg, struct fuse_file_info *info, unsigned int flags, void *data)
+{
+	return 0;
+}
+
+// Poll ofr IO readness events.
+static int dc_poll(const char *path, struct fuse_file_info *info, struct fuse_pollhandle *ph, unsigned *reventsp)
+{
+	return 0;
+}
+
+static struct fuse_operations dc_oper = {
+        .getattr     = dc_getattr,
+        //.readlink    = dc_readlink,
+        // getdir() deprecated, use readdir()
+        .getdir        = NULL,
+        //.mknod       = dc_mknod,
+        //.mkdir       = dc_mkdir,
+        //.unlink      = dc_unlink,
+        //.rmdir       = dc_rmdir,
+        //.symlink     = dc_symlink,
+        //.rename      = dc_rename,
+        //.link        = dc_link,
+        //.chmod       = dc_chmod,
+        //.chown       = dc_chown,
+        //.truncate    = dc_truncate,
+        // utime() deprecated, use utimens
+        .utime         = NULL,
+        .open        = dc_open,
+        .read        = dc_read,
+        //.write       = dc_write,
+        //.statfs      = dc_statfs,
+        //.flush       = dc_flush,
+        .release     = dc_release,
+        //.fsync       = dc_fsync,
+        //.setxattr    = dc_setxattr,
+        //.getxattr    = dc_getxattr,
+        //.listxattr   = dc_listxattr,
+        //.removexattr = dc_removexattr,
+        //.opendir     = dc_opendir,
+        .readdir     = dc_readdir,
+        //.releasedir  = dc_releasedir,
+        //.fsyncdir    = dc_fsyncdir,
+        .init        = dc_init,
+        //.destroy     = dc_destroy,
+        //.access      = dc_access,
+        //.create      = dc_create,
+        //.ftruncate   = dc_ftruncate,
+        //.getattr     = dc_fgetattr,
+        //.lock        = dc_lock,
+        //.utimens     = dc_utimens,
+        //.ioctl       = dc_ioctl,
+        //.poll        = dc_poll,
+};
+
+
+
+int main(int argc, char *argv[])
+{
+	int fuse_stat;
+	struct dc_state dc_data;
+
+	int ret = dci_init(&dc_data.dci_data);
+	if(ret != 0)
+		return ret;
+
+	fuse_stat = fuse_main(argc, argv, &dc_oper, NULL);
+
+	dci_destroy(&dc_data.dci_data);
+
+	return fuse_stat;
+}

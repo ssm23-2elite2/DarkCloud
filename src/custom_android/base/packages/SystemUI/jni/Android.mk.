@@ -1,0 +1,85 @@
+# Copyright (C) 2013 Jake Yoon<yjaeseok@gmail.com>
+#
+LOCAL_PATH := $(call my-dir)
+ANDROID_SOURCE := /home/jk/bin
+#CFLAGS := -Wpointer-arith -Wwrite-strings -Wunused -Winline -Wnested-externs -Wmissing-declarations -Wmissing-prototypes -Wno-long-long -Wfloat-equal -Wno-multichar -Wsign-compare -Wno-format-nonliteral -W
+#common_CFLAGS := -Wpointer-arith -Wwrite-strings -Wunused -Winline -Wnested-externs -Wmissing-declarations -Wmissing-prototypes -Wno-long-long -Wfloat-equal -Wno-multichar -Wsign-compare -Wno-format-nonliteral -Wendif-labels -Wstrict-prototypes -Wdeclaration-after-statement -Wno-system-headers -DHAVE_CONFIG_H
+
+include $(CLEAR_VARS)
+LOCAL_CFLAGS	:= -D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=26 -D__MULTI_THREAD
+LOCAL_MODULE    := libfuse
+LOCAL_SRC_FILES := fuse/cuse_lowlevel.c fuse/fuse.c fuse/fuse_kern_chan.c \
+	fuse/fuse_loop.c fuse/fuse_loop_mt.c fuse/fuse_lowlevel.c \
+	fuse/fuse_mt.c fuse/fuse_opt.c fuse/fuse_session.c fuse/fuse_signals.c \
+	fuse/helper.c fuse/mount.c fuse/mount_util.c fuse/ulockmgr.c
+LOCAL_C_INCLUDES := fuse/include
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+include $(LOCAL_PATH)/curl/lib/Makefile.inc
+LOCAL_MODULE := static-curl
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := $(addprefix curl/lib/,$(CSOURCES))
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/curl/include $(LOCAL_PATH)/curl/lib $(LOCAL_PATH)/ares $(ANDROID_SOURCE)/external/openssl/include $(ANDROID_SOURCE)/external/zlib
+LOCAL_CFLAGS += $(CFLAGS) -DHAVE_CONFIG_H
+LOCAL_STATIC_LIBRARIES := static-ares
+LOCAL_LDFLAGS := -lssl -lcrypto -lz -L$(ANDROID_SOURCE)/out/target/product/generic/system/lib
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+include $(LOCAL_PATH)/ares/Makefile.inc
+LOCAL_MODULE := static-ares
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := $(addprefix ares/,$(CSOURCES))
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/ares
+LOCAL_CFLAGS += $(CFLAGS) -DHAVE_CONFIG_H
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libcurl
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := curl/curl.c
+LOCAL_STATIC_LIBRARIES := static-curl static-ares
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/curl/include $(LOCAL_PATH)/curl/lib
+LOCAL_CFLAGS += -Wall
+LOCAL_LDFLAGS += -llog -lssl -lcrypto -lz -L$(ANDROID_SOURCE)/out/target/product/generic/system/lib
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libjsonc
+LOCAL_SRC_FILES := jsonc/json_object_iterator.c jsonc/json_tokener.c jsonc/libjson.c jsonc/arraylist.c \
+        jsonc/linkhash.c jsonc/json_c_version.c jsonc/json_c_version.c jsonc/json_util.c jsonc/printbuf.c \
+        jsonc/debug.c jsonc/json_object.c
+LOCAL_C_INCLUDES := jsonc/include
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libxml2
+LOCAL_SRC_FILES := xml2/SAX.c xml2/entities.c xml2/encoding.c xml2/error.c xml2/parserInternals.c \
+	xml2/parser.c xml2/tree.c xml2/hash.c xml2/list.c xml2/xmlIO.c \
+	xml2/xmlmemory.c xml2/uri.c xml2/valid.c xml2/xlink.c xml2/HTMLparser.c \
+	xml2/HTMLtree.c xml2/debugXML.c xml2/xpath.c xml2/xpointer.c xml2/xinclude.c \
+        xml2/nanohttp.c xml2/nanoftp.c xml2/DOCBparser.c xml2/catalog.c xml2/globals.c \
+        xml2/threads.c xml2/c14n.c xml2/xmlstring.c xml2/xmlregexp.c xml2/xmlschemas.c \
+        xml2/xmlschemastypes.c xml2/xmlunicode.c xml2/xmlreader.c xml2/relaxng.c xml2/dict.c \
+        xml2/SAX2.c xml2/legacy.c xml2/chvalid.c xml2/pattern.c xml2/xmlsave.c xml2/xmlmodule.c \
+        xml2/xmlwriter.c xml2/schematron.c
+LOCAL_C_INCLUDES := xml2/include
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_STATIC_LIBRARIES := libfuse libcurl libxml2 libjsonc 
+LOCAL_CFLAGS	:= -D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=26 -D__MULTI_THREAD
+LOCAL_C_INCLUDES := darkcloud/include fuse/include jsonc/include xml2/include curl/include curl/lib
+LOCAL_MODULE    := darkcloud
+LOCAL_SRC_FILES := darkcloud/curl_interface.c darkcloud/functional_stack.c \
+	darkcloud/dc_fuse_operations.c darkcloud/dc_interface.c darkcloud/stack.c darkcloud/str.c darkcloud/util.c
+LOCAL_LDFLAGS += -llog -lz -L$(ANDROID_SOURCE)/out/target/product/crespo/system/lib
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libdarkcloudv1
+LOCAL_SRC_FILES := DCloudNative.c
+include $(BUILD_SHARED_LIBRARY)
+
