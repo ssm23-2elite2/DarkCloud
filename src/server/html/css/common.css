@@ -1,0 +1,46 @@
+@charset "utf-8";
+
+/*************************************** 공통요소 정의 ***************************************/
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, p, form, figure, fieldset, input, th, td { margin:0; padding:0; }
+
+a:link {color:#555555; text-decoration:none;}
+a:visited {color:#555555; text-decoration:none;}
+a:hover {color:#555555; text-decoration:underline;}
+a:active {color:#555555; text-decoration:none;}
+
+
+/* 기본 font 설정 */
+html, body {
+	font-size:13px;
+	height:100%;
+	overflow-x:hidden;
+	background:#c0c0c0;
+}
+
+/* 숨김 설정 */
+.hide { display:none; }
+.transparent { opacity:0; }
+.cur {cursor:pointer;}
+
+/* 이미지 설정 */
+img { border:0; }
+
+/* Login */
+.login_content_frame {width:1280px; height:100%; background-color:#f1f1f1; margin:0 auto;}
+.login_content_frame .login_box {position:relative; width:665px; height:61px; background:url('../img/login_dialog.png'); background-position:center bottom; background-repeat:no-repeat; margin:0 auto; padding-top:305px;}
+.login_content_frame .logo {position:relative; width:181px; height:93px; background:url('../img/login_background_logo.png'); margin-left:240px; margin-top:166px; }
+.login_content_frame .id_hint {width:236px; height:23px; background:url('../img/login_please_input_gmail.png'); margin-left:233px; margin-top:19px; }
+.login_content_frame .login_box .id {width:383px; height:35px; margin-top:-5px; font-size:25px; border:none; background:none;}
+.login_content_frame .login_box .submit {position:absolute; width:29px; height:61px; margin-left:402px; margin-top:-49px;}
+.login_content_frame .auth_id_popup {position:absolute; top:-270px; left:-25px;}
+.login_content_frame .auth_id_popup .txt {background-color:#b9b9b9; font-size:25px; color:#FFFFFF; padding:5px;}
+.login_content_frame .auth_id_popup .point {width:19px; height:11px; margin-left:13px; background:url('../img/login_popup_point.png');}
+
+/* List */
+.list_content_frame {width:1280px; height:100%; background-color:#f1f1f1; margin:0 auto;}
+.list_content_frame .header_bar {height:31px; line-height:31px; margin-left:1120px;}
+.list_content_frame .header_frame {width:100%; height:61px; padding-left:80px; padding-right:80px; float:left;}
+.list_content_frame .header_frame .path_frame {width:893px; height:61px; margin-left:12px; float:left; background:url('../img/list_path_background.png'); background-repeat:no-repeat; padding-left:72px; line-height:58px; font-size:30px; color:#6b6b6b; }
+.list_content_frame .menu_frame {width:215px; height:auto; padding-left:80px; padding-top:12px; float:left;}
+.list_content_frame .file_frame {width:867px; height:100%; float:left; border:1px solid #d0d0d0; margin:12px; background:#ffffff; padding:12px; overflow-y:scroll;}

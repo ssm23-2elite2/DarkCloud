@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>	Dark Cloud </title>
+		<script src = "http://code.jquery.com/jquery-1.7.1.js"></script>
+		<link href = "css/common.css" type="text/css" rel="stylesheet" media="all" />
+		<link rel="shortcut icon" href="../img/favicon.ico">
+		<link rel="icon" type="image/gif" href="../img/animated_favicon1.gif">
+	</head>
+	<body>
+		<div class="login_content_frame">
+			<div class="login_box">
+				<div id="id_hint" class="id_hint" />
+				<input type="text" name="id" id="id" class="id" />
+				<input type="button" id="submit_btn" class="submit transparent cur" />
+			</div>
+			<div class="logo" />
+			<div id="auth_popup" class="auth_id_popup hide">
+				<div id="txt" class="txt"></div>
+				<div class="point"></div>
+			</div>
+		</div>
+
+		<script>
+			var auth = 0;
+			$(document).ready(function(){
+				// hint
+				$("#id").focus(function(){
+					$("#id_hint").css("background", "#FFFFFF");
+				}).blur(function(){
+					if($(this).val() == "") {
+						if(auth == 0)
+							$("#id_hint").css("background", "url('../img/login_please_input_gmail.png')");
+						else
+							$("#id_hint").css("background", "url('../img/login_please_input_code.png')");
+					}
+				}).keyup(function(e) {
+					if (e.keyCode == 13)
+						$("#submit_btn").click();
+				});
+
+				// submit
+				$("#submit_btn").click(function(){
+					// 구글계정 인증
+					if(auth == 0) {
+						$.post("/login", {id:$("#id").val()}, function(data, status){
+							if(data == 'id_not_exist') {
+								alert('아이디가 존재하지 않습니다.');
+								$("#id").val("").focus();
+							} else if(data == 'enter_authCode') {
+								// 인증코드 요청
+								$("#auth_popup").fadeIn();
+								$("#txt").text($("#id").val());
+								$("#id").val("").blur();
+								$("#id_hint").css("background", "url('../img/login_please_input_code.png')");
+								auth = 1;
+							} else {
+								alert('에러 발생\n잠시후 다시 시도해주세요.');
+							}
+						});
+					}
+
+					// 인증코드 인증
+					else {
+						$.post("/authCode", {authCode:$("#id").val()}, function(data, status){
+							if(data == 'authCode_not_equal') {
+								alert('인증번호가 일치하지 않습니다.');
+								$("#id").val("").focus();
+							} else {
+								// 일치
+								$(location).attr('href', '/list/' + data + '?path=/');
+							}
+						});
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
+

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title> Dark Cloud </title>
+		<script src = "http://code.jquery.com/jquery-1.7.1.js"></script>
+		<script src = "http://malsup.github.io/jquery.form.js"></script>
+		<script src = "http://lokeshdhakar.com/projects/lightbox2/js/lightbox-2.6.min.js"></script>
+		<script src = "../js/jquery.reveal.js"></script>
+		<link href = "../css/common.css" type="text/css" rel="stylesheet" media="all" />
+		<link href = "../css/reveal.css" type="text/css" rel="stylesheet" media="all" />
+		<link href = "http://lokeshdhakar.com/projects/lightbox2/css/lightbox.css" type="text/css" rel="stylesheet" media="all" />
+		<link rel="shortcut icon" href="../img/favicon.ico">
+		<link rel="icon" type="image/gif" href="../img/animated_favicon1.gif">
+	</head>
+	<body>
+		<div class="list_content_frame">
+			<div class="header_bar"><a href="/">로그아웃</a></div>
+			<div class="header_frame">
+				<a href="/list/<%=devID %>?path=/"><img src="../img/list_logo.png" style="float:left;" /></a>
+				<div class="path_frame">
+					<%= path %>
+				</div>
+			</div>
+			<div class="menu_frame">
+				<img id="upload_btn" src="../img/list_upload_btn.png" class="cur" />
+				<img id="mkdir_btn"  src="../img/list_create_folder_btn.png" class="cur" />
+				<img id="download_btn"  src="../img/list_selected_download_btn.png" class="cur hide" />
+				<img id="delete_btn"  src="../img/list_selected_delete_btn.png" class="cur" />
+			</div>
+			<div id="file_frame" class="file_frame">
+				<table width="100%" border="0">
+					<tr style="height:44px;">
+						<td width="40" style="text-align:center;"><input type="checkbox" id="all_check" style="vertical-align:-3px;" /></td>
+						<td>파일명</td>
+						<td width="100" style="text-align:center;">파일크기</td>
+						<td width="100" style="text-align:center;">파일형식</td>
+						<td width="200" style="text-align:center;">최종수정날짜</td>
+					</tr>
+					
+					<tr>
+						<td colspan="5" style="background:#cccccc; height:1px; font-size:0px;"></td>
+					</tr>
+
+					<tr style="height:35px;">
+						<td></td>
+						<% if(path == '/' || (path.lastIndexOf('/') == 0)){ %>
+							<td><a href = "/list/<%= devID %>?path=<%= path.substring(0, path.lastIndexOf('/')+1) %>">..</a></td>
+						<% } else { %>
+							<td><a href = "/list/<%= devID %>?path=<%= path.substring(0, path.lastIndexOf('/')) %>">..</a></td>
+						<% } %>
+						
+							
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+
+					<tr>
+						<td colspan="5" style="background:#cccccc; height:1px; font-size:0px;"></td>
+					</tr>
+
+					
+					<% data.forEach(function (item, index) { %>
+						<tr style="height:35px;">
+							<td style="text-align:center;">
+								<input type="checkbox" id="file_check" style="vertical-align:-3px;" value=<%= item._id %> isFolder="<%= item.isFolder %>">
+							</td>
+							<% if(item.isFolder == 1){ %>
+							<td>
+								<img src="../img/list_folder_icon.png" />
+								<% if(item.path == '/'){ %>
+								<a href = "/list/<%= item.deviceID %>?path=<%= item.path %><%= item.fileName %>"><%= item.fileName %></a>
+								<% } else { %>
+								<a href = "/list/<%= item.deviceID %>?path=<%= item.path %>/<%= item.fileName %>"><%= item.fileName %></a>
+								<% } %>
+							</td>
+							<% } else { %>
+							<td>
+								<img src="../img/list_file_icon.png" />
+								
+								<% if(item.fileName.indexOf(".jpg") > 0 || 
+									item.fileName.indexOf(".jpeg") > 0 || 
+									item.fileName.indexOf(".JPG") > 0 || 
+									item.fileName.indexOf(".JPEG") > 0 ||
+									item.fileName.indexOf(".png") > 0 ||
+									item.fileName.indexOf(".PNG") > 0 ||
+									item.fileName.indexOf(".gif") > 0 ||
+									item.fileName.indexOf(".GIF") > 0 ||
+									item.fileName.indexOf(".bmp") > 0 ||
+									item.fileName.indexOf(".BMP") > 0) { %>
+									<a href = "/webRead/<%= item._id %>" data-lightbox="image"><%= item.fileName %></a>
+								<% }else { %>
+									<a href = "/webRead/<%= item._id %>"><%= item.fileName %></a>
+								<% } %>
+							</td>
+							<% } %>
+							<td style="text-align:center;">
+								<% if(item.isFolder == 0) { %>
+									<%
+										if((Math.round((parseInt(item.fileSize) / 1024) * 100) / 100) > 1024) {
+									%>
+									<%=Math.round((parseInt(item.fileSize) / 1024 / 1024) * 100) / 100 %> MB
+									<% } else {%>
+									<%=Math.round((parseInt(item.fileSize) / 1024) * 100) / 100 %> KB
+									<% } %>
+								<% } %>
+							</td>
+							
+							<td style="text-align:center;">
+								<% if(item.fileName.indexOf(".jpg") > 0 || 
+									item.fileName.indexOf(".jpeg") > 0 || 
+									item.fileName.indexOf(".JPG") > 0 || 
+									item.fileName.indexOf(".JPEG") > 0) { 
+								%>JPG<%
+									}else if(item.fileName.indexOf(".png") > 0 ||
+											item.fileName.indexOf(".PNG") > 0) {
+								%>PNG<%
+									}else if(item.fileName.indexOf(".gif") > 0 ||
+											item.fileName.indexOf(".GIF") > 0) {
+								%>GIF<%
+									}else if(item.fileName.indexOf(".bmp") > 0 ||
+											item.fileName.indexOf(".BMP") > 0) {
+								%>BMP<%
+									}else {
+								%>기타<% } %>
+							</td>
+							
+							<%
+								var date = new Date(parseInt(item.uploadDate) * 1000);
+								var y = date.getFullYear().toString();
+								var m = (date.getMonth() + 1).toString();
+								var d =  date.getDate().toString();
+								var h = date.getHours().toString();
+								var min = date.getMinutes().toString();
+								var s = date.getSeconds().toString();
+								var date = y + "/" + (m[1] ? m : '0' + m[0]) + "/" + (d[1] ? d : '0' + d[0]) + " " + (h[1] ? h : '0' + h[0]) + ":" + (min[1] ? min : '0' + min[0]) + ":" + (s[1] ? s : '0' + s[0]) %>
+							<td style="text-align:center;"><%= date %></td>
+						</tr>
+						<tr>
+							<td colspan="5" style="background:#cccccc; height:1px; font-size:0px;"></td>
+						</tr>
+						<% }); %>
+
+				</table>
+			</div>
+		</div>
+		<a id="hidden_btn" data-reveal-id="uploadPopup"></a>
+
+		<form id="uploadForm" method="post" action="/write2" enctype = "multipart/form-data" class="hide">
+			<input type="hidden" id="path" name="path" value=<%=path %> />
+			<input type="hidden" id="devID" name="devID" value=<%=devID %> />
+			<input type="file" name="uploadFile" id="uploadFile" />
+		</form>
+
+		<script>
+			$(document).ready(function(){
+				//upload
+				$("#upload_btn").click(function(){
+					$("#uploadFile").click();
+				});
+
+				// upload file check 
+				$("#uploadFile").on("change", function(){
+					$("#title").text($("#uploadFile").val().substring($("#uploadFile").val().lastIndexOf('\\')+1));
+					$("#hidden_btn").click();
+
+					setTimeout(function() {
+						$("#uploadForm").ajaxSubmit({
+							statusCode: {   
+								400: function() {
+									alert("파일 내용이 잘못되었습니다.");
+								},
+								500: function() {
+									alert("파일을 업로드할 수 없습니다.");
+								}
+							},
+							success: function(data) {
+								$("#msg").text("업로드 되었습니다. 파일 목록을 다시 읽습니다.");
+								setTimeout(function(){window.location.reload(true);}, 1000);
+							}
+						});
+					}, 1000);
+				});
+
+				// 전체 선택
+				$("#all_check").click(function(){
+					if($(this).is(":checked") == true) {
+						$("[id=file_check]").attr('checked', true);
+					} else {
+						$("[id=file_check]").attr('checked', false);
+					}
+				});
+
+				// 폴더 생성
+				$("#mkdir_btn").click(function(){
+					$("#hidden_btn").click();
+					$("#title").text('폴더 생성');
+					$("#loading").hide();
+					$("#msg").text('');
+					$("#folder_create_end_btn, #folder_name_txt").removeClass("hide");
+					$("#folder_name_txt").val("폴더명을 입력하세요.");
+				});
+
+				// 폴더명
+				$("#folder_name_txt").focus(function(){
+					if($(this).val() == "폴더명을 입력하세요.") {
+						$(this).val("");
+					}	
+				}).keyup(function(e) {
+					if (e.keyCode == 13)
+						$("#folder_create_end_btn").click();
+				});
+
+				// 폴더 생성 완료 버튼
+				$("#folder_create_end_btn").click(function(){
+					if($("#folder_name_txt").val() == "" || $("#folder_name_txt").val() == "폴더명을 입력하세요.") {
+						alert("폴더명을 입력하세요.");
+						$("#folder_name_txt").focus();
+					} else {
+						$.post("/mkdir2", {path:$("#path").val(), devID:$("#devID").val(), dirName:$("#folder_name_txt").val()}, function(data, status) {
+							$("#loading").show();
+							$("#folder_create_end_btn, #folder_name_txt").addClass("hide");
+							$("#msg").text("폴더 생성 되었습니다. 파일 목록을 다시 읽습니다.");
+							setTimeout(function(){window.location.reload(true);}, 1000);
+						});
+					}
+				});
+
+				// 선택 다운로드
+				$("#download_btn").click(function(){
+					alert('Download');
+				});
+
+				// 선택 삭제
+				$("#delete_btn").click(function(){
+					if($("[id=file_check]:checked").size() == 0) {
+						alert('파일을 선택해주세요.');
+					} else {
+						$("#hidden_btn").click();
+						$("#title").text('파일 삭제');
+						$("#msg").text('선택 파일 삭제중');
+						
+						var $temp = $("[id=file_check]:checked");
+						var count = 0;
+						for(i=0; i<$temp.size(); i++) {
+							var url = "/remove2";
+							if($temp.eq(i).attr('isFolder') == "1") url="/rmdir2";
+							$.post(url, {_id:$temp.eq(i).val()}, function(data, status) {
+								count++;
+								
+								if(count == $temp.size()) {
+									$("#msg").text("삭제 완료 되었습니다. 파일 목록을 다시 읽습니다.");
+									setTimeout(function(){window.location.reload(true);}, 1000);
+								}
+							});
+						}
+					}
+				});
+
+				// 창 크기 조절
+				$("#file_frame").height($(window).height()-150);
+			});
+
+			$('#uploadPopup').reveal({
+				animation: 'fadeAndPop',
+				animationspeed: 300,
+				closeonbackgroundclick: false,
+				dismissmodalclass: 'close-reveal-modal'
+			});
+
+			$(window).resize(function() {
+				$("#file_frame").height($(window).height()-150);
+			});
+
+		</script>
+
+		<div id="uploadPopup" class="reveal-modal" style="text-align:center;">
+			<h1 id="title"></h1>
+			<img id="loading" src="http://yimg.twhouses.com.tw/ynh/public/loading_icon.gif" style="width:100px; height:100px;" />
+			<input type="text" id="folder_name_txt" value="폴더명을 입력하세요." style="width: 250; text-align: center; font-size: 25px; height: 40px; margin-top: 15px; border: 1px solid #c0c0c0;" class="hide" />
+			<input id="folder_create_end_btn" type="button" value="생성" style="width: 50px; height: 40px; vertical-align: 3px; border: 1px solid #4D4D4D; background: #c0c0c0;" class="hide" />
+			<p id="msg" style="margin-top:5px;">파일업로드중 입니다.</p>
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+
+		<!-- 과거 소스 -->
+		<!--<a href = "/download">File Download</a><br>-->
+		<!--<a href = "/delete">File Delete</a> -->
+	</body>
+</html>

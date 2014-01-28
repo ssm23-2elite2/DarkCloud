@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Dark Cloud </title>
+		<link href = "../css/common.css" type = "text/css" rel="stylesheet" media="all" />
+	</head>
+
+	<body>
+		<form action="/mkdir2", method="post", enctype="multipart/form-data">
+			<input type="hidden" name="path" value = <%=path %> />
+			<input type="hidden" name="devID" value = <%=devID %> />
+			<input type="text"	name="dirName" value= "Plz Enter the Directory Name" />
+			<input type="submit"/>	
+		</form>
+	</body>
+</html>
+
+
