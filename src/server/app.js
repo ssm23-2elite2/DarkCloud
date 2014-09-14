@@ -1,13 +1,3 @@
- 
-/**
-  wtonode.org/really-simple-file-uploads‎
-  이 페이지 번역하기
-  작성자: srirangan@gmail.com (Srirangan)
-  2012. 2. 5. - It was the first time I was implementing file uploads with Node (and ... So I did the next most obvious thing - post a question on the mailing list.
-  File uploads using Node.js: now for real | Componentix blog
- * Module dependencies.
- */
-
 var express = require('express');
 var routes = require('./routes');
 var http = require('http');
