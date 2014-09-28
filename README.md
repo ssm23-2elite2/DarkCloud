@@ -16,11 +16,11 @@ Dark Cloud System은 기존 Cloud System이 가진 동기화 방식의 한계점
  
 다음으로, Dark Cloud Full Source를 다운로드 받습니다. Dark Cloud를 다운로드 받을 폴더를 추가합니다.
 
-    $mkdir ~/DarkCloud
+    $ mkdir ~/DarkCloud
 
 Dark Cloud 소스를 다운받습니다.
 
-    $git full https://github.com/ssm23-2elite2/DarkCloud.git
+    $ git full https://github.com/ssm23-2elite2/DarkCloud.git
 
 Dark Cloud 소스는 다음과 같이 구성되어있습니다.
    
@@ -39,8 +39,8 @@ Dark Cloud 소스는 다음과 같이 구성되어있습니다.
 
 Android Framework Source의 일부를 Dark Cloud Repository에서 받은 파일로 교체합니다.
 
-    $cp -rf ~/DarkCloud/src/android/settings ~/framework/packages/apps/Settings/src/com/android/settings
-    $cp -rf ~/DarkCloud/src/android/SystemUI ~/framework/frameworks/base/packages/SystemUI
+    $ cp -rf ~/DarkCloud/src/android/settings ~/framework/packages/apps/Settings/src/com/android/settings
+    $ cp -rf ~/DarkCloud/src/android/SystemUI ~/framework/frameworks/base/packages/SystemUI
 
 
 
