@@ -40,7 +40,7 @@ exports.webRead = function(req, res){
 						console.log(data[0]);
 						obj = JSON.stringify(data[0]);
 						parse = JSON.parse(obj);
-						readStream = fs.createReadStream("/home/hb/DarkCloud/src/server/fileStorage/" + parse._id);
+						readStream = fs.createReadStream("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + parse._id);
 						if( parse.fileName.indexOf('.png') > 0 || parse.fileName.indexOf('.jpg') > 0
 						|| parse.fileName.indexOf('.jpeg') > 0 || parse.fileName.indexOf('.gif') > 0 
 						|| parse.fileName.indexOf('.bmp') > 0 || parse.fileName.indexOf('.PNG') > 0 
@@ -66,11 +66,10 @@ exports.listOpen = function(req, res){ // 웹 페이지와 DB 연결
 
 	var query = url.parse(req.url, true).query;
 	query = JSON.stringify(query);
-	console.log("query : " + query);
 	var str = JSON.parse(query);
 	console.log("path : " + str.path);
 
-	fs.readFile('/home/hb/DarkCloud/src/server/html/list.html','utf8', function(error, data) {
+	fs.readFile('/home/jake/Workspace/darkcloud/DarkCloud/src/server/html/list.html','utf8', function(error, data) {
 		db.collection('fileInfo', function(err, collection) {
 			find = collection.find({deviceID : devID, path : str.path}).sort({isFolder:-1});
 					
@@ -123,7 +122,7 @@ exports.read = function(req, res) { // 디바이스가 파일을 요청할 때
 						console.log(data[0]);
 						obj = JSON.stringify(data[0]);
 						parse = JSON.parse(obj);
-						readStream = fs.createReadStream("/home/hb/DarkCloud/src/server/fileStorage/" + parse._id);
+						readStream = fs.createReadStream("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + parse._id);
 						readStream.pipe(res);
 					}); 
 				}
@@ -176,7 +175,7 @@ exports.write = function(req, res) { // 디바이스가 파일을 저장할 때(
 		decodeBody[i/2+1] = tmp2;
 	}
 
-	fs.appendFile("/home/hb/DarkCloud/src/server/fileStorage/" + fileid, decodeBody, 'utf8', function(err){
+	fs.appendFile("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + fileid, decodeBody, 'utf8', function(err){
 				if(err) throw err;
 	});
 	
@@ -225,7 +224,7 @@ exports.create = function(req, res){
 						//console.log(data);
 						obj2 = JSON.stringify(result[0]);
 						parse2 = JSON.parse(obj2);
-						fs.writeFile("/home/hb/DarkCloud/src/server/fileStorage/" + parse2._id , "", function(err){
+						fs.writeFile("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + parse2._id , "", function(err){
 							if(err) console.log(err);
 							else	console.log('File create success');
 						});
@@ -258,7 +257,7 @@ exports.write2 = function(req, res) { // 디바이스가 파일을 저장할 때
 						//console.log(data);
 						obj2 = JSON.stringify(result[0]);
 						parse2 = JSON.parse(obj2);
-						fs.writeFile("/home/hb/DarkCloud/src/server/fileStorage/" + parse2._id ,data, function(err){
+						fs.writeFile("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + parse2._id ,data, function(err){
 							if(err) console.log(err);
 							else	console.log('File Write success');
 						});
@@ -280,7 +279,7 @@ exports.remove = function(req, res) {
 				if(err){
 					res.send('delete_error');
 				} else{
-					fs.unlink("/home/hb/DarkCloud/src/server/fileStorage/" + fileid, function(err){
+					fs.unlink("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + fileid, function(err){
 						if(err)	console.log(err);
 						else console.log("file remove sucess!");
 					});
@@ -380,7 +379,7 @@ exports.remove2 = function(req, res){
 	parse = JSON.parse(obj);
 
 	db.collection('fileInfo', function(err, collection){
-		fs.unlink("/home/hb/DarkCloud/src/server/fileStorage/" + parse._id, function(err){
+		fs.unlink("/home/jake/Workspace/darkcloud/DarkCloud/src/server/fileStorage/" + parse._id, function(err){
 			if(err)	console.log(err);
 			else console.log("file remove sucess!");
 		});
@@ -393,13 +392,14 @@ exports.remove2 = function(req, res){
 };
 exports.rmdir2 = function(req, res){
 	var body, obj, parse, find;
+	var devID;
 	body = req.body;
 	obj = JSON.stringify(body);
 	parse = JSON.parse(obj);
 
 	db.collection('fileInfo', function(err, collection) {
 
-	find2 = collection.find({deviceID : devID});
+	find2 = collection.find({"deviceID" : devID});
 
 	/*	find2.each(function(err, data){
 			obj2 = JSON.stringify(data);
