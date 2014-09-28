@@ -43,5 +43,10 @@ Android Framework Source의 일부를 Dark Cloud Repository에서 받은 파일�
     $cp -rf ~/DarkCloud/src/android/SystemUI ~/framework/frameworks/base/packages/SystemUI
 
 
-#2. Dark Cloud Server 시작하기
 
+
+감사한 분들:
+
+http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
+https://www.ibm.com/developerworks/linux/library/l-fuse/
+https://github.com/jcline/fuse-google-drive
