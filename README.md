@@ -1,4 +1,4 @@
-DarkCloud
+Dark Cloud
 =========
 
 안녕하세요. Dark Cloud System Repository에 오신 여러분을 환영합니다.
@@ -6,7 +6,7 @@ Dark Cloud System은 기존 Cloud System이 가진 동기화 방식의 한계점
 
 
 
-#1.Dark Cloud Client 시작하기
+#1. Dark Cloud Client 시작하기
 (모든 시작하기의 내용은 ubuntu 12.04 를 기준으로 작성되있습니다.)
 
 먼저, Dark Cloud System을 활용한 Client를 구성하기 위해서 Android Framework Source를 다운로드 해야합니다.
