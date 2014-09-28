@@ -38,7 +38,7 @@ Dark Cloud System은 기존 Cloud System이 가진 동기화 방식의 한계점
 
 
   Android Framework Source의 일부를 Dark Cloud Repository에서 받은 파일로 교체합니다.
-  - $cp -rf ~/DarkCloud/src/android/Settings ~/framework/packages/apps/Settings
+  - $cp -rf ~/DarkCloud/src/android/settings ~/framework/packages/apps/Settings/src/com/android/settings
   - $cp -rf ~/DarkCloud/src/android/SystemUI ~/framework/frameworks/base/packages/SystemUI
 
 
